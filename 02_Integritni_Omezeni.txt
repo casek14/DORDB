@@ -1,0 +1,17 @@
+A) Triviální integritní omezení
+Tabulka Doktoøi:
+Plat doktora musí být nejménì 25 000 Kè, protože minimální plat doktora nesmí být podle zákona menší než 25 000 Kè.
+
+Tabulka Adresa:
+PSC musí být dlouhé právì 5 míst bez mezery.
+
+Tabulka Pacienti:
+Datum narození také nesmí být nulový a musí být vìtší než 1.1.1900. (Nepøedpokládáme starší osobu 118 let). Zároveò musí být menší než aktuální datum.
+Váha a Výška musejí být vìtší než 0.
+
+--------------------------------------------------------------------------
+
+B) Netriviální integritní omezení
+Pøi pøidání vyšetøení pacienta s názvem preventivní prohlídka bude zkontrolováno
+zda již nemìl v daném kalendáøním roce nìjakou preventivní prohlídku. Jestliže již 
+preventivní prohlídku mìl, bude mu pøidání takové prohlídky zamítnuto.
