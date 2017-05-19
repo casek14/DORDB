@@ -1,1 +1,1 @@
-# DORDB
+# A pak že to nepujde
