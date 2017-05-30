@@ -224,7 +224,10 @@ CREATE TABLE  Vysetreni
 
 /* Create Comments, Sequences and Triggers for Autonumber Columns */
 
-CREATE SEQUENCE SEQ_ADRESA_ADRESA_ID
+-- nutne pro triggery, jinak hazou chybu
+ALTER SESSION SET PLSCOPE_SETTINGS = 'IDENTIFIERS:NONE';
+
+CREATE SEQUENCE SEQ_ADRESA_ADRESA_ID 
 	INCREMENT BY 1 
 	START WITH 1 
 	NOMAXVALUE 
