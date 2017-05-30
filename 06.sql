@@ -6,7 +6,7 @@ ALTER TABLE Doktori ADD CONSTRAINT chck_salary CHECK (plat > 25000);
 
 --Tabulka Adresa:
 --PSC musí být dlouhé právì 5 míst bez mezery.
-ALTER TABLE Adresa ADD CONSTRAINT chck_psc CHECK (psc like '[0-9][0-9][0-9][0-9][0-9]') ;
+ALTER TABLE Adresa ADD CONSTRAINT chck_psc CHECK ((length(psc) = 5 and regexp_like (psc,'^[0-9]*$'))) ;
 ALTER TABLE Adresa ADD CONSTRAINT chck_cp CHECK (cp > 0) ;
 
 --Tabulka Pacient:
@@ -17,7 +17,7 @@ ALTER TABLE Pacient ADD CONSTRAINT chck_vyska CHECK (vyska > 0);
 
 
 
-B) Netriviální integritní omezení
+--B) Netriviální integritní omezení
 --Pøi pøidání vyšetøení pacienta s názvem preventivní prohlídka bude zkontrolováno
 --zda již nemìl v daném kalendáøním roce nìjakou preventivní prohlídku. Jestliže již 
 --preventivní prohlídku mìl, bude mu pøidání takové prohlídky zamítnuto.
