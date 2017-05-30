@@ -2,7 +2,7 @@
 
 --Tabulka Doktori
 --Plat doktora musí být nejménì 25 000 Kè, protože minimální plat doktora nesmí být podle zákona menší než 25 000 Kè.
-ALTER TABLE DOKTORI ADD CONSTRAINT chck_salary CHECK (plat > 25000);
+ALTER TABLE Doktori ADD CONSTRAINT chck_salary CHECK (plat > 25000);
 
 --Tabulka Adresa:
 --PSC musí být dlouhé právì 5 míst bez mezery.
