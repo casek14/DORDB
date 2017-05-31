@@ -18,14 +18,15 @@ ALTER TABLE Pacient ADD CONSTRAINT chck_vyska CHECK (vyska > 0);
 --Pøi pøidání vyšetøení pacienta s názvem preventivní prohlídka bude zkontrolováno
 --zda již nemìl v daném kalendáøním roce nìjakou preventivní prohlídku. Jestliže již 
 --preventivní prohlídku mìl, bude mu pøidání takové prohlídky zamítnuto.
-CREATE OR REPLACE PROCEDURE prcd_pridani_vysetreni (novy_nazev VYSETRENI.NAZEV%TYPE, id_karta_pacienta KARTA_PACIENTA.KARTA_PACIENTA_ID%TYPE)
+
+CREATE OR REPLACE PROCEDURE prcd_pridani_vysetreni (novy_nazev VYSETRENI.NAZEV%TYPE, id_pacient PACIENT.PACIENT_ID%TYPE)
 IS
 pocet number;
 BEGIN
-  IF novy_nazev = 'preventivni prohlidka' THEN
-    select count(*) into pocet from vysetreni v join karta_pacienta k on v.KARTA_PACIENTA_ID = k.KARTA_PACIENTA_ID
-    where k.KARTA_PACIENTA_ID = id_karta_pacienta and v.NAZEV = novy_nazev
-    and extract(year from datum) = extract(year from sysdate);
+  IF novy_nazev = 'Preventivni prohlidka' THEN
+    select count(*) into pocet from vysetreni v join pacient p on v.PACIENT_ID = p.PACIENT_ID
+    where p.PACIENT_ID = id_pacient and v.NAZEV = novy_nazev
+    and extract(year from v.datum) = extract(year from sysdate);
   
     IF (pocet > 0) THEN
     RAISE_APPLICATION_ERROR(-20000,'PACIENT JIZ MEL TENTO ROK PREVENTIVNI PROHLIDKU!');
@@ -38,7 +39,7 @@ END;
 CREATE OR REPLACE TRIGGER trg_pridani_pacienta
 BEFORE INSERT OR UPDATE ON VYSETRENI FOR EACH ROW
 BEGIN 
-  prcd_pridani_vysetreni(:NEW.nazev, :NEW.KARTA_PACIENTA_ID); 
+  prcd_pridani_vysetreni(:NEW.NAZEV, :NEW.PACIENT_ID); 
 END;
 
 
