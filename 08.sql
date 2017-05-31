@@ -1,16 +1,32 @@
-/* Bod 8 - dotazy*/
-
-/* select 1*/
-select avg(d.salary) , s.nazev from Doktori d
-join Specializace s 
+/*
+4. Výpis prùmìrného poètu urèitého typu vyšetøení pacientù v produktivním vìku (18-65 let)
+5. Výpis doktorù s danou specializací a poètem operací daného doktora za pøedchozích 5 let
+6. Výpis souètu operací provedených doktory se stejnými specializacemi za pøedchozích 5 let 
+ */  
+-- 1. Vypsat prùmìrný plat doktorù podle specifikace
+select round(avg(d.plat),2), s.NAZEV from doktor d
+join specializace s 
 on d.specializace_id = s.specializace_id
-group by d.specializace_id;
+group by d.specializace_id, s.NAZEV;
 
-/* select 2 */
-select p.jmeno , p.prijmeni , p.datum_narozeni, v.nazev, v.popis, v.datum
-from Pacienti p join Karta_Pacienta k 
-on p.pacienti_id = k.pacienti_id
-join vysetreni v 
-on (select vysetreni_id from k where pacienti_id = k.pacienti_id)
-= v.vysetreni_id;
-where to_char(v.datum, 'YYYY')=to_char(sysdate, 'YYYY');
+--2. Výpis všech vyšetøení daného pacienta s podrobnými informacemi
+select p.jmeno , p.prijmeni , p.datum_narozeni, v.nazev, v.popis, d.prijmeni as "VYSETRIL",  v.datum as "DATUM_VYSETRENI"
+from pacient p join vysetreni v 
+on p.pacient_id = v.pacient_id
+join DOKTOR d 
+on d.DOKTOR_ID = v.DOKTOR_ID
+where p.pacient_id = 723;
+
+--3. Vypsat doktory s danou specializací v dané mìstì
+select d.jmeno, d.prijmeni, s.nazev as "SPECIALIZACE", a.mesto from doktor d join specializace s
+on s.SPECIALIZACE_ID = d.SPECIALIZACE_ID
+join adresa a
+on a.ADRESA_ID = d.ADRESA_ID
+where a.MESTO = 'Port Harcourt' and s.nazev = 'Fyzioterapie';
+
+
+
+
+
+
+
