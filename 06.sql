@@ -11,8 +11,8 @@ ALTER TABLE Adresa ADD CONSTRAINT chck_cp CHECK (cp > 0) ;
 
 --Tabulka Pacient:
 --Váha a Výška musejí být vìtší než 0.
-ALTER TABLE Pacient ADD CONSTRAINT chck_vaha CHECK (vaha > 0);
-ALTER TABLE Pacient ADD CONSTRAINT chck_vyska CHECK (vyska > 0);
+ALTER TABLE Pacienti ADD CONSTRAINT chck_vaha CHECK (vaha > 0);
+ALTER TABLE Pacienti ADD CONSTRAINT chck_vyska CHECK (vyska > 0);
 
 
 
@@ -21,6 +21,15 @@ ALTER TABLE Pacient ADD CONSTRAINT chck_vyska CHECK (vyska > 0);
 --Pøi pøidání vyšetøení pacienta s názvem preventivní prohlídka bude zkontrolováno
 --zda již nemìl v daném kalendáøním roce nìjakou preventivní prohlídku. Jestliže již 
 --preventivní prohlídku mìl, bude mu pøidání takové prohlídky zamítnuto.
+CREATE OR REPLACE PROCEDURE prcd_pridani_vysetreni (novy_nazev VYSETRENI.NAZEV%TYPE, id_pacienta PACIENTI.PACIENTI_ID%TYPE)
+IS
+BEGIN
+
+select count(*) from vysetreni 
+
+END;
+/
+
 
 CREATE OR REPLACE TRIGGER trg_pridani
 BEFORE INSERT ON VYSETRENI FOR EACH ROW
@@ -42,8 +51,8 @@ END;
 
 
 --Datum narození musí být menší než aktuální datum a vetsi nez 1900
-CREATE OR REPLACE TRIGGER trg_datum_pacient
-BEFORE INSERT ON PACIENT FOR EACH ROW
+CREATE OR REPLACE TRIGGER trg_datum_pacienti
+BEFORE INSERT ON PACIENTI FOR EACH ROW
 DECLARE ERROR EXCEPTION;
 BEGIN 
 IF INSERTING THEN
