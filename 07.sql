@@ -4657,7 +4657,7 @@ INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Vysetren
 INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Akutni bolest','adipiscing, enim mi','18/12/2016',426,805);
 
 INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Preventivni prohlidka','ultricies','05/08/2010',308,958);
-INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Preventivni prohlidka','a, arcu.','05/07/2015',813,265);
+INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Preventivni prohlidka','a, arcu.','05/07/2014',813,265);
 INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Akutni bolest','arcu.','30/07/2010',731,196);
 INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Vysetreni','In nec','21/12/2016',841,122);
 INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Akutni bolest','ipsum','02/03/2009',526,182);
