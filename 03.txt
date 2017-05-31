@@ -10,13 +10,12 @@ Dále bude zamìstnanci pøiøazen plat, který musí být vìtší než 25 000 kè, viz int
 
 Pøidání pacienta:
 Název: ADD_patient
-Parametry: jméno, pøíjmení, váha, výška, datum narození, adresa, karta pacienta
+Parametry: jméno, pøíjmení, váha, výška, datum narození, adresa
 Popis: Procedura vytvoøení pacienta spoèívá v pøiøazení parametrù
 a provázání s dalšími údaji. Bude vytvoøena adresa, která bude s daným pacientem asociována.
-Také bude pacientovi vytvoøena karta pacienta, do které se ukládají jednotlivá vyšetøení.
 
 Pøidání vyšetøení:
 Název: ADD_examination
-Parametry: název, popis, datum, doktor
-Popis: Procedura pøidání vyšetøení vytvoøí na kartì pacienta další záznam, který je popsán, pojmenován a pøiøazen k urèitému datu. 
+Parametry: název, popis, datum, doktor, pacient
+Popis: Procedura pøidání vyšetøení vytvoøí záznam, který je popsán, pojmenován a pøiøazen k urèitému datu. 
 Také je v záznamu uvedeno, který doktor vyšetøení provedl. 
