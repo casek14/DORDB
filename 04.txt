@@ -1,7 +1,7 @@
 4) dotazy
 
 1. Vypsat prùmìrný plat doktorù podle specifikace
-2. Výpis všech vyšetøení daného pacienta v daném roce s podrobnými informacemi
+2. Výpis všech vyšetøení daného pacienta s podrobnými informacemi
 3. Vypsat doktory s danou specializací v dané mìstì
 4. Výpis prùmìrného poètu urèitého typu vyšetøení pacientù v produktivním vìku (18-65 let)
 5. Výpis doktorù s danou specializací a poètem operací daného doktora za pøedchozích 5 let
