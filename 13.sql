@@ -1,46 +1,46 @@
 /* Vytvoreni uzivatelsky definovanych typu */
 
 CREATE OR REPLACE TYPE t_adresa AS OBJECT (
-"adresa_id" NUMBER(38),
-"ulice" VARCHAR(50),
-"psc" NUMBER(5),
-"cp" NUMBER(7),
-"mesto" VARCHAR(50)
+adresa_id NUMBER(38),
+ulice VARCHAR(50),
+psc NUMBER(5),
+cp NUMBER(7),
+mesto VARCHAR(50)
 );
 /
 
 CREATE OR REPLACE TYPE t_specializace AS OBJECT (
-"specializace_id" NUMBER(38),
-"nazev" VARCHAR(50)
+specializace_id NUMBER(38),
+nazev VARCHAR(50)
 );
 /
 
 CREATE OR REPLACE TYPE t_doktor AS OBJECT (
-"doktor_id" NUMBER(38),
-"jmeno" VARCHAR(50),
-"prijmeni" VARCHAR(50),
-"plat" NUMBER(38),
+doktor_id NUMBER(38),
+jmeno VARCHAR(50),
+prijmeni VARCHAR(50),
+plat NUMBER(38),
 adresa_ref REF t_adresa,
 specializace_ref REF t_specializace
 );
 /
 
 CREATE OR REPLACE TYPE t_pacient AS OBJECT (
-"pacient_id" NUMBER(38),
-"jmeno" VARCHAR(50),
-"prijmeni" VARCHAR(50),
-"datum_narozeni" DATE,
-"vaha" NUMBER(3),
-"vyska" NUMBER(3),
+pacient_id NUMBER(38),
+jmeno VARCHAR(50),
+prijmeni VARCHAR(50),
+datum_narozeni DATE,
+vaha NUMBER(3),
+vyska NUMBER(3),
 adresa_ref REF t_adresa
 );
 /
 
 CREATE or REPLACE TYPE t_vysetreni as OBJECT (
-"vysetreni_id" NUMBER(38),
-"nazev" VARCHAR(50),
-"popis" VARCHAR(500),
-"datum" DATE,
+vysetreni_id NUMBER(38),
+nazev VARCHAR(50),
+popis VARCHAR(500),
+datum DATE,
 doktor_ref REF t_doktor,
 pacient_ref REF t_pacient
 );
