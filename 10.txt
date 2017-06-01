@@ -7,20 +7,23 @@ CREATE OR REPLACE PACKAGE doktor_api AS
 PROCEDURE vytvor_adresu (ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2);
 PROCEDURE vytvor_doktora (jmeno in VARCHAR2, prijmeni in VARCHAR2, plat in NUMBER, specializace in NUMBER);
 END;
-/
+
 CREATE OR REPLACE PACKAGE BODY doktor_api AS
-PROCEDURE vytvor_adresu (ulice in VARCHAR,psc in NUMBER, cp in NUMBER, mesto in VARCHAR) AS
+PROCEDURE vytvor_adresu (ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2) AS
+POCET NUMBER:
 BEGIN 
 INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto);
+SELECT count(*) INTO POCET FROM ADRESA;
 END;
 
-PROCEDURE vytvor_doktora (jmeno in VARCHAR, prijmeni in VARCHAR, plat in NUMBER) AS
+
+PROCEDURE vytvor_doktora (jmeno in VARCHAR2, prijmeni in VARCHAR2, plat in NUMBER) AS
 BEGIN
-INSERT INTO doktor (jmeno, prijmeni, plat,specializace_id, adresa_id) values (jmeno,prijmeni, plat, specializace,SEQ_ADRESA_ADRESA_ID.CURRVAL);
+INSERT INTO doktor (jmeno, prijmeni, plat,specializace_id, adresa_id) values (jmeno,prijmeni, plat, specializace,POCET);
 END;
 END;
 
-
+/
 
 /* pridani pacienta */
 CREATE OR REPLACE PACKAGE pacient_api AS
@@ -28,19 +31,20 @@ PROCEDURE vytvor_adresu (ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in
 PROCEDURE vytvor_pacienta (jmeno in VARCHAR2,prijmeni in VARCHAR2, datum_narozeni in DATE, vaha in NUMBER, vyska in NUMBER,
 adresa_id in NUMBER);
 END;
-/
 CREATE OR REPLACE PACKAGE BODY pacient_api AS
 PROCEDURE vytvor_adresu (ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2) AS
+POCET NUMBER;
 BEGIN 
 INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto);
+SELECT count(*) INTO POCET FROM ADRESA;
 END;
 PROCEDURE vytvor_pacienta (jmeno in VARCHAR2, prijmeni in VARCHAR2, datum_narozeni in DATE, vaha in NUMBER, vyska in NUMBER) AS
 BEGIN
-INSERT INTO pacient (jmeno, prijmeni, datum_narozeni, vaha, vyska, adresa_id) values (jmeno,prijmeni, datum_narozeni,vaha,vyska,SEQ_PACIENT_PACIENT_ID.CURRVAL);
+INSERT INTO pacient (jmeno, prijmeni, datum_narozeni, vaha, vyska, adresa_id) values (jmeno,prijmeni, datum_narozeni,vaha,vyska,POCET;
 END;
 END;
 
-
+/
 /* pridani vysetreni */
 
 CREATE OR REPLACE PACKAGE vysetreni_api AS
