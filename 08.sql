@@ -1,5 +1,4 @@
 /*
-4. Výpis prùmìrného poètu urèitého typu vyšetøení pacientù v produktivním vìku (18-65 let)
 5. Výpis doktorù s danou specializací a poètem operací daného doktora za pøedchozích 5 let
 6. Výpis souètu operací provedených doktory se stejnými specializacemi za pøedchozích 5 let 
  */  
@@ -23,6 +22,56 @@ on s.SPECIALIZACE_ID = d.SPECIALIZACE_ID
 join adresa a
 on a.ADRESA_ID = d.ADRESA_ID
 where a.MESTO = 'Port Harcourt' and s.nazev = 'Fyzioterapie';
+
+--4. Výpis poètu urèitého typu vyšetøení pacientù v produktivním vìku (18-65 let)
+select count(*), v.NAZEV from vysetreni v join pacient p on p.PACIENT_ID = v.PACIENT_ID
+where  (sysdate - p.DATUM_NAROZENI > 18*365.25) and
+(sysdate -  p.DATUM_NAROZENI < 65*365.25) 
+group by v.NAZEV;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
