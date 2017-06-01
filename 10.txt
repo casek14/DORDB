@@ -12,8 +12,8 @@ CREATE OR REPLACE PACKAGE BODY doktor_api AS
 PROCEDURE vytvor_adresu (ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2) AS
 POCET NUMBER:
 BEGIN 
-INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto);
-SELECT count(*) INTO POCET FROM ADRESA;
+INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto)
+RETURNING adresa_id into POCET;
 END;
 
 
@@ -35,8 +35,8 @@ CREATE OR REPLACE PACKAGE BODY pacient_api AS
 PROCEDURE vytvor_adresu (ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2) AS
 POCET NUMBER;
 BEGIN 
-INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto);
-SELECT count(*) INTO POCET FROM ADRESA;
+INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto)
+RETURNING adresa_id into POCET;
 END;
 PROCEDURE vytvor_pacienta (jmeno in VARCHAR2, prijmeni in VARCHAR2, datum_narozeni in DATE, vaha in NUMBER, vyska in NUMBER) AS
 BEGIN
