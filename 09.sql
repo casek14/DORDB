@@ -1,0 +1,28 @@
+SPOOL 09_output.txt
+
+--Tabulka Doktor:
+--Plat doktora musí být nejménì 25 000 Kè, protože minimální plat doktora nesmí být podle zákona menší než 25 000 Kè.
+INSERT INTO Doktor (jmeno,prijmeni,plat,specializace_id,adresa_id) VALUES ('Leon','Vojtìch',12500,1,234);
+--Tabulka Adresa:
+--PSC musí být dlouhé právì 5 míst bez mezery.
+INSERT INTO Adresa (ulice,psc,cp,mesto) VALUES ('U školy',1234,55,'Hradec');
+
+--Tabulka Pacient:
+--Datum narození musí být vìtší než 1.1.1900. (Nepøedpokládáme starší osobu 118 let). Zároveò musí být menší než aktuální datum.
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1492',85,183,234);
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/2492',85,183,234);
+
+--Váha a Výška musejí být vìtší než 0.
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1994',-25,183,234);
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1994',85,-44,234);
+
+--Tabulka Vysetreni:
+--Datum musí být menší než aktuální datum.
+INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Vysetreni','Nákaza nehrozí.','11/12/2875',318,140);
+--------------------------------------------------------------------------
+/*Pøi pøidání vyšetøení pacienta s názvem preventivní prohlídka bude zkontrolováno
+zda již nemìl v daném kalendáøním roce nìjakou preventivní prohlídku. Jestliže již 
+preventivní prohlídku mìl, bude mu pøidání takové prohlídky zamítnuto.*/
+INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Preventivni prohlidka','Zcela zdráv.','03/05/2017',318,66);
+
+SPOOL OFF;

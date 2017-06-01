@@ -1,0 +1,106 @@
+> --Tabulka Doktor:
+> --Plat doktora musí být nejménì 25 000 Kè, protože minimální plat doktora nesmí být podle zákona menší než 25 000 Kè.
+> INSERT INTO Doktor (jmeno,prijmeni,plat,specializace_id,adresa_id) VALUES ('Leon','Vojtìch',12500,1,234)
+
+Error starting at line : 5 in command -
+INSERT INTO Doktor (jmeno,prijmeni,plat,specializace_id,adresa_id) VALUES ('Leon','Vojtìch',12500,1,234)
+Error report -
+SQL Error: ORA-02290: kontrolní omezení (DOVOJTELE1.CHCK_SALARY) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+> --Tabulka Adresa:
+> --PSC musí být dlouhé právì 5 míst bez mezery.
+> INSERT INTO Adresa (ulice,psc,cp,mesto) VALUES ('U školy',1234,55,'Hradec')
+
+Error starting at line : 8 in command -
+INSERT INTO Adresa (ulice,psc,cp,mesto) VALUES ('U školy',1234,55,'Hradec')
+Error report -
+SQL Error: ORA-02290: kontrolní omezení (DOVOJTELE1.CHCK_PSC) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+> --Tabulka Pacient:
+> --Datum narození musí být vìtší než 1.1.1900. (Nepøedpokládáme starší osobu 118 let). Zároveò musí být menší než aktuální datum.
+> INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1492',85,183,234)
+
+Error starting at line : 12 in command -
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1492',85,183,234)
+Error report -
+SQL Error: ORA-20000: SPATNE ZADANE DATUM. DATUM MUSI BYT MEZI 01-01-1900 A DNESNIM DATEM!
+ORA-06512: na "DOVOJTELE1.TRG_DATUM_PACIENTI", line 9
+ORA-04088: chyba bìhem provádìní triggeru 'DOVOJTELE1.TRG_DATUM_PACIENTI'
+20000. 00000 -  "%s"
+*Cause:    The stored procedure 'raise_application_error'
+           was called which causes this error to be generated.
+*Action:   Correct the problem as described in the error message or contact
+           the application administrator or DBA for more information.
+> INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/2492',85,183,234)
+
+Error starting at line : 13 in command -
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/2492',85,183,234)
+Error report -
+SQL Error: ORA-20000: SPATNE ZADANE DATUM. DATUM MUSI BYT MEZI 01-01-1900 A DNESNIM DATEM!
+ORA-06512: na "DOVOJTELE1.TRG_DATUM_PACIENTI", line 9
+ORA-04088: chyba bìhem provádìní triggeru 'DOVOJTELE1.TRG_DATUM_PACIENTI'
+20000. 00000 -  "%s"
+*Cause:    The stored procedure 'raise_application_error'
+           was called which causes this error to be generated.
+*Action:   Correct the problem as described in the error message or contact
+           the application administrator or DBA for more information.
+> --Váha a Výška musejí být vìtší než 0.
+> INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1994',-25,183,234)
+
+Error starting at line : 16 in command -
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1994',-25,183,234)
+Error report -
+SQL Error: ORA-02290: kontrolní omezení (DOVOJTELE1.CHCK_VAHA) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+> INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1994',85,-44,234)
+
+Error starting at line : 17 in command -
+INSERT INTO Pacient (jmeno,prijmeni,datum_narozeni,vaha,vyska,adresa_id) VALUES ('Leon','Vojtìch','06/01/1994',85,-44,234)
+Error report -
+SQL Error: ORA-02290: kontrolní omezení (DOVOJTELE1.CHCK_VYSKA) porušeno
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+> --Tabulka Vysetreni:
+> --Datum musí být menší než aktuální datum.
+> INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Vysetreni','Nákaza nehrozí.','11/12/2875',318,140)
+
+Error starting at line : 21 in command -
+INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Vysetreni','Nákaza nehrozí.','11/12/2875',318,140)
+Error report -
+SQL Error: ORA-20000: SPATNE ZADANE DATUM. DATUM MUSI BYT MENSI NEZ DNESNI DATUM!
+ORA-06512: na "DOVOJTELE1.TRG_DATUM_VYSETRENI", line 9
+ORA-04088: chyba bìhem provádìní triggeru 'DOVOJTELE1.TRG_DATUM_VYSETRENI'
+20000. 00000 -  "%s"
+*Cause:    The stored procedure 'raise_application_error'
+           was called which causes this error to be generated.
+*Action:   Correct the problem as described in the error message or contact
+           the application administrator or DBA for more information.
+> --------------------------------------------------------------------------
+> /*Pøi pøidání vyšetøení pacienta s názvem preventivní prohlídka bude zkontrolováno
+zda již nemìl v daném kalendáøním roce nìjakou preventivní prohlídku. Jestliže již 
+preventivní prohlídku mìl, bude mu pøidání takové prohlídky zamítnuto.*/
+> INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Preventivni prohlidka','Zcela zdráv.','03/05/2017',318,66)
+
+Error starting at line : 26 in command -
+INSERT INTO Vysetreni (nazev,popis,datum,doktor_id,pacient_id) VALUES ('Preventivni prohlidka','Zcela zdráv.','03/05/2017',318,66)
+Error report -
+SQL Error: ORA-20000: PACIENT JIZ MEL TENTO ROK PREVENTIVNI PROHLIDKU!
+ORA-06512: na "DOVOJTELE1.PRCD_PRIDANI_VYSETRENI", line 11
+ORA-06512: na "DOVOJTELE1.TRG_PRIDANI_PACIENTA", line 2
+ORA-04088: chyba bìhem provádìní triggeru 'DOVOJTELE1.TRG_PRIDANI_PACIENTA'
+20000. 00000 -  "%s"
+*Cause:    The stored procedure 'raise_application_error'
+           was called which causes this error to be generated.
+*Action:   Correct the problem as described in the error message or contact
+           the application administrator or DBA for more information.
