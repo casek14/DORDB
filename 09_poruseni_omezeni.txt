@@ -1,4 +1,4 @@
-SPOOL 09_output.txt
+SPOOL 09_vystup.txt
 
 --Tabulka Doktor:
 --Plat doktora musí být nejménì 25 000 Kè, protože minimální plat doktora nesmí být podle zákona menší než 25 000 Kè.

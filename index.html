@@ -83,11 +83,34 @@
 			</ul>  
               
             <h2>3. Slovní návrh API rozhraní „business logiky“</h2>
-            
-                        
+
+			<p><b>Název:</b> ADD_DOCTOR()</br>
+			<b>Parametry:</b> jméno, příjmení, plat, specializace, adresa</br>
+			<b>Popis:</b> Procedura vytvoření doktora spočívá v přiřazení parametrů
+			a provázání s dalšími údaji. Doktorovi bude přiřazena specializace 
+			z tabulky specialize. Dále mu bude vytvořena adresa, která bude s daným doktorem asociována.
+			Dále bude zaměstnanci přiřazen plat, který musí být větší než 25 000 kč, viz integritní omezení.</p>
+
+			<p><b>Název:</b> ADD_patient</br>
+			<b>Parametry:</b> jméno, příjmení, váha, výška, datum narození, adresa</br>
+			<b>Popis:</b> Procedura vytvoření pacienta spočívá v přiřazení parametrů
+			a provázání s dalšími údaji. Bude vytvořena adresa, která bude s daným pacientem asociována.</p>
+               
+
+			<p><b>Název:</b> ADD_examination</br>
+			<b>Parametry:</b> název, popis, datum, doktor, pacient</br>
+			<b>Popis:</b> Procedura přidání vyšetření vytvoří záznam, který je popsán, pojmenován a přiřazen k určitému datu. 
+			Také je v záznamu uvedeno, který doktor vyšetření provedl.</p> 
+			   
             <h2>4. Pět slovně formulovaných dotazů nad schématem</h2>
-            
-            
+            <ol>
+				<li>Vypsat průměrný plat doktorů podle specifikace</li>
+				<li>Výpis všech vyšetření daného pacienta s podrobnými informacemi</li>
+				<li>Vypsat doktory s danou specializací v dané městě</li>
+				<li>Výpis počtu určitého typu vyšetření pacientů v produktivním věku (18-65 let)</li>
+				<li>Výpis doktorů s danou specializací a počtem různých akcí daného doktora za předchozích 5 let</li>
+				<li>Výpis součtu různých akcí provedených doktory se stejnými specializacemi za předchozích 5 let</li>
+            </ol>
             
             <h2>5. Skript, který vytvoří databázové schéma odpovídající E-R diagramu</h2>
               <p><strong>Skript:</strong> <a href="05_db_schema.txt">05_db_schema.txt</a></p>
@@ -102,6 +125,7 @@
             <h2>9. Skript, který se pokusí porušit všechna dodatečná integritní omezení</h2>
               <p><strong>Skript:</strong> <a href="09_poruseni_omezeni.txt">09_poruseni_omezeni.txt</a></p>
               <p><strong>Výstup:</strong> <a href="09_vystup.txt">09_vystup.txt</a></p>
+			  <p> Byly porovnány 1. a 6. dotaz. V obou případech dopadlo lépe (menší cena) použití group by cube, group by s union má větší cenu.
             <h2>10. Skript pro vytvoření balíku (package) a procedur „business logiky“</h2>
               <p><strong>Skript:</strong> <a href="10_balik_a_procedury.txt">10_balik_a_procedury</a></p>
             <h2>11. Ověření procedur „business logiky“</h2>

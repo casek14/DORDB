@@ -1,5 +1,5 @@
 SET AUTOTRACE ON;
-SPOOL 08_output.txt
+SPOOL 08_vysledky_dotazu.txt
 
 -- 1. Vypsat prùmìrný plat doktorù podle specifikace
 --A)
