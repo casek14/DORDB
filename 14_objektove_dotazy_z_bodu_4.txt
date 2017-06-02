@@ -1,0 +1,83 @@
+SET AUTOTRACE ON;
+SPOOL 14_vystup.txt
+
+-- 1. Vypsat prùmìrný plat doktorù podle specifikace
+--A)
+select s.NAZEV, round(avg(d.plat),2) as "PRUMERNY_PLAT" from obj_doktor d
+join obj_specializace s 
+on d.specializace_ref = REF(s)
+group by cube(s.NAZEV)
+order by s.NAZEV;
+--B)
+select (select s.NAZEV from obj_specializace s where d.specializace_ref = REF(s)) as "NAZEV", 
+round(avg(d.plat),2) as "PRUMERNY_PLAT" from obj_doktor d
+group by d.specializace_ref
+union 
+select null, round(avg(d.plat),2)
+from obj_doktor d
+order by NAZEV;
+
+--2. Výpis všech vyšetøení daného pacienta s podrobnými informacemi
+select p.jmeno , p.prijmeni , p.datum_narozeni, v.nazev, v.popis, d.prijmeni as "VYSETRIL",  v.datum as "DATUM_VYSETRENI"
+from obj_pacient p join obj_vysetreni v 
+on v.pacient_ref = REF(p)
+join obj_DOKTOR d 
+on v.DOKTOR_ref = REF(d)
+where p.pacient_id = 723
+order by v.datum desc;
+
+--3. Vypsat doktory s danou specializací v dané mìstì
+select d.jmeno, d.prijmeni, s.nazev as "SPECIALIZACE", a.mesto from obj_doktor d join obj_specializace s
+on REF(s) = d.SPECIALIZACE_ref
+join obj_adresa a
+on REF(a) = d.ADRESA_ref
+where a.MESTO = 'Port Harcourt' and s.nazev = 'Fyzioterapie'
+order by d.prijmeni;
+
+--4. Výpis poètu urèitého typu vyšetøení pacientù v produktivním vìku (18-65 let)
+--A)
+select count(*) as "POCET_VYSETRENI", v.NAZEV from obj_vysetreni v 
+join obj_pacient p on REF(p) = v.PACIENT_ref
+where  (sysdate - p.DATUM_NAROZENI > 18*365.25) and
+(sysdate -  p.DATUM_NAROZENI < 65*365.25) and 
+v.NAZEV = 'Akutni bolest'
+group by v.NAZEV;
+
+--B)
+select count(*) as "POCET_VYSETRENI", v.NAZEV from obj_vysetreni v 
+join obj_pacient p on REF(p) = v.PACIENT_ref
+where p.DATUM_NAROZENI between sysdate - 65*365.25 and sysdate - 18*365.25
+and v.NAZEV = 'Akutni bolest'
+group by v.NAZEV;
+
+--5. Výpis doktorù s danou specializací a poètem rùzných akcí daného doktora za pøedchozích 5 let
+select d.JMENO, d.PRIJMENI, count(v.vysetreni_id) as "POCET_VYSETRENI", s.NAZEV 
+from obj_doktor d join obj_specializace s on REF(s) = d.SPECIALIZACE_ref
+join obj_vysetreni v on v.DOKTOR_ref = REF(d)
+where (sysdate - v.DATUM < 5*365.25) and s.NAZEV = 'Plasticka chirurgie'
+group by d.PRIJMENI, d.JMENO, s.NAZEV
+order by d.PRIJMENI, d.JMENO;
+
+--6. Výpis souètu rùzných akcí provedených doktory se stejnými specializacemi za pøedchozích 5 let 
+--A)
+select s.NAZEV, count(v.vysetreni_id) as "POCET_VYSETRENI" 
+from obj_vysetreni v 
+join obj_doktor d on REF(d) = v.DOKTOR_ref 
+join obj_specializace s on REF(s) = d.SPECIALIZACE_ref
+where (sysdate - v.DATUM < 5*365.25)
+group by cube(s.NAZEV)
+order by s.NAZEV;
+
+--B)
+select s.NAZEV, count(v.vysetreni_id) as "POCET_VYSETRENI" 
+from obj_vysetreni v 
+join obj_doktor d on REF(d) = v.DOKTOR_ref 
+join obj_specializace s on REF(s) = d.SPECIALIZACE_ref
+where (sysdate - v.DATUM < 5*365.25)
+group by s.NAZEV
+union
+select null, count(v.vysetreni_id) from obj_vysetreni v 
+where (sysdate - v.DATUM < 5*365.25);
+
+SPOOL OFF;
+SET AUTOTRACE OFF;

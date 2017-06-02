@@ -1,0 +1,112 @@
+/* Vytvoreni uzivatelsky definovanych typu */
+
+CREATE OR REPLACE TYPE t_adresa AS OBJECT (
+adresa_id NUMBER(38),
+ulice VARCHAR(50),
+psc NUMBER(5),
+cp NUMBER(7),
+mesto VARCHAR(50)
+);
+/
+
+CREATE OR REPLACE TYPE t_specializace AS OBJECT (
+specializace_id NUMBER(38),
+nazev VARCHAR(50)
+);
+/
+
+CREATE OR REPLACE TYPE t_doktor AS OBJECT (
+doktor_id NUMBER(38),
+jmeno VARCHAR(50),
+prijmeni VARCHAR(50),
+plat NUMBER(38),
+adresa_ref REF t_adresa,
+specializace_ref REF t_specializace
+);
+/
+
+CREATE OR REPLACE TYPE t_pacient AS OBJECT (
+pacient_id NUMBER(38),
+jmeno VARCHAR(50),
+prijmeni VARCHAR(50),
+datum_narozeni DATE,
+vaha NUMBER(3),
+vyska NUMBER(3),
+adresa_ref REF t_adresa
+);
+/
+
+CREATE or REPLACE TYPE t_vysetreni as OBJECT (
+vysetreni_id NUMBER(38),
+nazev VARCHAR(50),
+popis VARCHAR(500),
+datum DATE,
+doktor_ref REF t_doktor,
+pacient_ref REF t_pacient
+);
+/
+
+/* vytvoreni tabulek*/
+CREATE TABLE OBJ_Adresa of t_adresa;
+CREATE TABLE OBJ_Specializace of t_specializace;
+CREATE TABLE OBJ_Doktor of t_doktor;
+CREATE TABLE OBJ_Pacient of t_pacient;
+CREATE TABLE OBJ_Vysetreni of t_vysetreni;
+
+
+
+/* Naplneni daty */
+INSERT INTO OBJ_Adresa SELECT * FROM adresa;
+INSERT INTO OBJ_Specializace SELECT * FROM specializace;
+
+INSERt into obj_doktor (doktor_id, jmeno, prijmeni, plat) 
+select doktor_id, jmeno, prijmeni, plat
+FROM Doktor; 
+
+UPDATE OBJ_Doktor d 
+set d.adresa_ref =
+(select ref(a)
+FROM obj_adresa a join adresa a1 on a.adresa_id = a1.adresa_id
+join doktor d1 on d1.adresa_id = a1.adresa_id
+Where d1.doktor_id = d.doktor_id);
+
+UPDATE OBJ_Doktor d 
+set d.specializace_ref = 
+(select ref(s)
+from obj_specializace s join specializace s1 on s.specializace_id = s1.specializace_id 
+JOIN doktor d1 on d1.specializace_id = s1.specializace_id
+WHERE d1.doktor_id = d.doktor_id);
+
+
+
+INSERt into obj_pacient (pacient_id, jmeno, prijmeni, datum_narozeni,vaha,vyska) 
+select pacient_id, jmeno, prijmeni, datum_narozeni, vaha,vyska
+FROM Pacient; 
+
+UPDATE OBJ_Pacient p 
+set p.adresa_ref =
+(select ref(a)
+FROM obj_adresa a join adresa a1 on a.adresa_id = a1.adresa_id
+join pacient p1 on p1.adresa_id = a1.adresa_id
+Where p1.pacient_id = p.pacient_id);
+
+
+
+insert into obj_vysetreni (vysetreni_id,nazev,popis,datum)
+select vysetreni_id,nazev,popis,datum
+FROM vysetreni;
+
+UPDATE obj_vysetreni v
+set v.doktor_ref = 
+(select ref(d)
+from obj_doktor d join doktor d1 on d.doktor_id = d1.doktor_id
+join vysetreni v1 on v1.doktor_id = d1.doktor_id
+where v1.vysetreni_id = v.vysetreni_id);
+
+UPDATE obj_vysetreni v
+set v.pacient_ref = 
+(select ref(p)
+from obj_pacient p join pacient p1 on p.pacient_id = p1.pacient_id
+join vysetreni v1 on v1.pacient_id = p1.pacient_id
+where v1.vysetreni_id = v.vysetreni_id);
+

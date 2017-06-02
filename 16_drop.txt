@@ -163,3 +163,16 @@ end;
 /
 drop procedure prcd_pridani_vysetreni;
 drop package nemocnice_api;
+
+drop table obj_adresa;
+drop table obj_doktor;
+drop table obj_pacient;
+drop table obj_specializace;
+drop table obj_vysetreni;
+
+drop type T_vysetreni force;
+drop type T_Pacient force;
+drop type T_doktor force;
+drop type T_adresa force;
+drop type T_specializace force;
+drop trigger trg_pridani_pacienta;

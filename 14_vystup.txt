@@ -1,0 +1,500 @@
+> -- 1. Vypsat prùmìrný plat doktorù podle specifikace
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --A)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select s.NAZEV, round(avg(d.plat),2) as "PRUMERNY_PLAT" from obj_doktor d
+join obj_specializace s 
+on d.specializace_ref = REF(s)
+group by cube(s.NAZEV)
+order by s.NAZEV
+NAZEV                                              PRUMERNY_PLAT
+-------------------------------------------------- -------------
+Chirurgie                                               115909,4 
+Fyzioterapie                                           110881,51 
+Gynekologie                                            127749,75 
+Kardiologie                                            103589,33 
+Neurologie                                             117780,18 
+Ocni lekarstvi                                         114764,51 
+Ortoped                                                117927,63 
+Plasticka chirurgie                                    109647,18 
+Psychiatrie                                            102232,91 
+Urologie                                                109851,2 
+                                                       112927,72 
+
+ 11 rows selected 
+
+Plan hash value: 4151514546
+ 
+-------------------------------------------------------------------------------------------
+| Id  | Operation              | Name             | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |                  |  1001 | 77077 |    13  (24)| 00:00:01 |
+|   1 |  SORT ORDER BY         |                  |  1001 | 77077 |    13  (24)| 00:00:01 |
+|   2 |   SORT GROUP BY        |                  |  1001 | 77077 |    13  (24)| 00:00:01 |
+|   3 |    GENERATE CUBE       |                  |  1001 | 77077 |    13  (24)| 00:00:01 |
+|   4 |     SORT GROUP BY      |                  |  1001 | 77077 |    13  (24)| 00:00:01 |
+|*  5 |      HASH JOIN         |                  |  1001 | 77077 |    11  (10)| 00:00:01 |
+|   6 |       TABLE ACCESS FULL| OBJ_SPECIALIZACE |    10 |   370 |     3   (0)| 00:00:01 |
+|   7 |       TABLE ACCESS FULL| OBJ_DOKTOR       |  1001 | 40040 |     7   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   5 - access("D"."SPECIALIZACE_REF"="S"."SYS_NC_OID$")
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --B)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select (select s.NAZEV from obj_specializace s where d.specializace_ref = REF(s)) as "NAZEV", 
+round(avg(d.plat),2) as "PRUMERNY_PLAT" from obj_doktor d
+group by d.specializace_ref
+union 
+select null, round(avg(d.plat),2)
+from obj_doktor d
+order by NAZEV
+NAZEV                                              PRUMERNY_PLAT
+-------------------------------------------------- -------------
+Chirurgie                                               115909,4 
+Fyzioterapie                                           110881,51 
+Gynekologie                                            127749,75 
+Kardiologie                                            103589,33 
+Neurologie                                             117780,18 
+Ocni lekarstvi                                         114764,51 
+Ortoped                                                117927,63 
+Plasticka chirurgie                                    109647,18 
+Psychiatrie                                            102232,91 
+Urologie                                                109851,2 
+                                                       112927,72 
+
+ 11 rows selected 
+
+Plan hash value: 839801571
+ 
+---------------------------------------------------------------------------------------------------
+| Id  | Operation                      | Name             | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT               |                  |  1002 | 40053 |    18  (23)| 00:00:01 |
+|   1 |  SORT ORDER BY                 |                  |  1002 | 40053 |    18  (23)| 00:00:01 |
+|   2 |   SORT UNIQUE                  |                  |  1002 | 40053 |    17  (59)| 00:00:01 |
+|   3 |    UNION-ALL                   |                  |       |       |            |          |
+|   4 |     TABLE ACCESS BY INDEX ROWID| OBJ_SPECIALIZACE |     1 |    49 |     1   (0)| 00:00:01 |
+|*  5 |      INDEX UNIQUE SCAN         | SYS_C00158143    |     1 |       |     1   (0)| 00:00:01 |
+|   6 |     SORT GROUP BY              |                  |  1001 | 40040 |     9  (23)| 00:00:01 |
+|   7 |      TABLE ACCESS FULL         | OBJ_DOKTOR       |  1001 | 40040 |     7   (0)| 00:00:01 |
+|   8 |     SORT AGGREGATE             |                  |     1 |    13 |     8  (13)| 00:00:01 |
+|   9 |      TABLE ACCESS FULL         | OBJ_DOKTOR       |  1001 | 13013 |     7   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   5 - access("S"."SYS_NC_OID$"=:B1)
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --2. Výpis všech vyšetøení daného pacienta s podrobnými informacemi
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select p.jmeno , p.prijmeni , p.datum_narozeni, v.nazev, v.popis, d.prijmeni as "VYSETRIL",  v.datum as "DATUM_VYSETRENI"
+from obj_pacient p join obj_vysetreni v 
+on v.pacient_ref = REF(p)
+join obj_DOKTOR d 
+on v.DOKTOR_ref = REF(d)
+where p.pacient_id = 723
+order by v.datum desc
+JMENO                                              PRIJMENI                                           DATUM_NAROZENI NAZEV                                              POPIS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                VYSETRIL                                           DATUM_VYSETRENI
+-------------------------------------------------- -------------------------------------------------- -------------- -------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------- ---------------
+Alyssa                                             Stout                                              01.12.60       Preventivni prohlidka                              mauris sagittis placerat.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Barrera                                            17.03.17        
+Alyssa                                             Stout                                              01.12.60       Vysetreni                                          sodales                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Massey                                             13.06.11        
+Alyssa                                             Stout                                              01.12.60       Vysetreni                                          Nam tempor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Burch                                              13.01.11        
+Alyssa                                             Stout                                              01.12.60       Akutni bolest                                      volutpat. Nulla                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      Rodriquez                                          28.08.09        
+Alyssa                                             Stout                                              01.12.60       Akutni bolest                                      malesuada                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Potts                                              02.01.08        
+Alyssa                                             Stout                                              01.12.60       Akutni bolest                                      ornare.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              Allen                                              04.07.07        
+Alyssa                                             Stout                                              01.12.60       Vysetreni                                          lorem,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Padilla                                            05.04.07        
+
+ 7 rows selected 
+
+Plan hash value: 292695046
+ 
+-----------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name          | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |               |     2 |   930 |    24   (9)| 00:00:01 |
+|   1 |  SORT ORDER BY                |               |     2 |   930 |    24   (9)| 00:00:01 |
+|   2 |   NESTED LOOPS                |               |       |       |            |          |
+|   3 |    NESTED LOOPS               |               |     2 |   930 |    23   (5)| 00:00:01 |
+|*  4 |     HASH JOIN                 |               |     2 |   856 |    21   (5)| 00:00:01 |
+|*  5 |      TABLE ACCESS FULL        | OBJ_PACIENT   |     1 |    86 |     7   (0)| 00:00:01 |
+|   6 |      TABLE ACCESS FULL        | OBJ_VYSETRENI |  2001 |   668K|    13   (0)| 00:00:01 |
+|*  7 |     INDEX UNIQUE SCAN         | SYS_C00158144 |     1 |       |     0   (0)| 00:00:01 |
+|   8 |    TABLE ACCESS BY INDEX ROWID| OBJ_DOKTOR    |     1 |    37 |     1   (0)| 00:00:01 |
+-----------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   4 - access("V"."PACIENT_REF"="P"."SYS_NC_OID$")
+   5 - filter("P"."PACIENT_ID"=723)
+   7 - access("V"."DOKTOR_REF"="D"."SYS_NC_OID$")
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --3. Vypsat doktory s danou specializací v dané mìstì
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select d.jmeno, d.prijmeni, s.nazev as "SPECIALIZACE", a.mesto from obj_doktor d join obj_specializace s
+on REF(s) = d.SPECIALIZACE_ref
+join obj_adresa a
+on REF(a) = d.ADRESA_ref
+where a.MESTO = 'Port Harcourt' and s.nazev = 'Fyzioterapie'
+order by d.prijmeni
+JMENO                                              PRIJMENI                                           SPECIALIZACE                                       MESTO                                            
+-------------------------------------------------- -------------------------------------------------- -------------------------------------------------- --------------------------------------------------
+Chastity                                           Armstrong                                          Fyzioterapie                                       Port Harcourt                                      
+Neville                                            Delgado                                            Fyzioterapie                                       Port Harcourt                                      
+Kadeem                                             Trevino                                            Fyzioterapie                                       Port Harcourt                                      
+
+Plan hash value: 3986646985
+ 
+--------------------------------------------------------------------------------------------------
+| Id  | Operation                     | Name             | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT              |                  |     1 |   182 |    15  (14)| 00:00:01 |
+|   1 |  SORT ORDER BY                |                  |     1 |   182 |    15  (14)| 00:00:01 |
+|   2 |   NESTED LOOPS                |                  |       |       |            |          |
+|   3 |    NESTED LOOPS               |                  |     1 |   182 |    14   (8)| 00:00:01 |
+|*  4 |     HASH JOIN                 |                  |     1 |   145 |    13   (8)| 00:00:01 |
+|*  5 |      TABLE ACCESS FULL        | OBJ_ADRESA       |     1 |    37 |     5   (0)| 00:00:01 |
+|   6 |      TABLE ACCESS FULL        | OBJ_DOKTOR       |  1001 |   105K|     7   (0)| 00:00:01 |
+|*  7 |     INDEX UNIQUE SCAN         | SYS_C00158143    |     1 |       |     0   (0)| 00:00:01 |
+|*  8 |    TABLE ACCESS BY INDEX ROWID| OBJ_SPECIALIZACE |     1 |    37 |     1   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   4 - access("D"."ADRESA_REF"="A"."SYS_NC_OID$")
+   5 - filter("A"."MESTO"='Port Harcourt')
+   7 - access("D"."SPECIALIZACE_REF"="S"."SYS_NC_OID$")
+   8 - filter("S"."NAZEV"='Fyzioterapie')
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --4. Výpis poètu urèitého typu vyšetøení pacientù v produktivním vìku (18-65 let)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --A)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select count(*) as "POCET_VYSETRENI", v.NAZEV from obj_vysetreni v 
+join obj_pacient p on REF(p) = v.PACIENT_ref
+where  (sysdate - p.DATUM_NAROZENI > 18*365.25) and
+(sysdate -  p.DATUM_NAROZENI < 65*365.25) and 
+v.NAZEV = 'Akutni bolest'
+group by v.NAZEV
+POCET_VYSETRENI NAZEV                                            
+--------------- --------------------------------------------------
+            232 Akutni bolest                                      
+
+Plan hash value: 3508446808
+ 
+--------------------------------------------------------------------------------------
+| Id  | Operation            | Name          | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT     |               |   237 | 20145 |    21   (5)| 00:00:01 |
+|   1 |  SORT GROUP BY NOSORT|               |   237 | 20145 |    21   (5)| 00:00:01 |
+|*  2 |   HASH JOIN          |               |   237 | 20145 |    21   (5)| 00:00:01 |
+|*  3 |    TABLE ACCESS FULL | OBJ_PACIENT   |   444 | 13764 |     7   (0)| 00:00:01 |
+|*  4 |    TABLE ACCESS FULL | OBJ_VYSETRENI |   534 | 28836 |    13   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   2 - access("V"."PACIENT_REF"="P"."SYS_NC_OID$")
+   3 - filter(SYSDATE@!-"P"."DATUM_NAROZENI">6574.5 AND 
+              SYSDATE@!-"P"."DATUM_NAROZENI"<23741.25)
+   4 - filter("V"."NAZEV"='Akutni bolest')
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --B)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select count(*) as "POCET_VYSETRENI", v.NAZEV from obj_vysetreni v 
+join obj_pacient p on REF(p) = v.PACIENT_ref
+where p.DATUM_NAROZENI between sysdate - 65*365.25 and sysdate - 18*365.25
+and v.NAZEV = 'Akutni bolest'
+group by v.NAZEV
+POCET_VYSETRENI NAZEV                                            
+--------------- --------------------------------------------------
+            232 Akutni bolest                                      
+
+Plan hash value: 3415237441
+ 
+--------------------------------------------------------------------------------------
+| Id  | Operation            | Name          | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT     |               |   237 | 20145 |    21   (5)| 00:00:01 |
+|   1 |  SORT GROUP BY NOSORT|               |   237 | 20145 |    21   (5)| 00:00:01 |
+|*  2 |   FILTER             |               |       |       |            |          |
+|*  3 |    HASH JOIN         |               |   237 | 20145 |    21   (5)| 00:00:01 |
+|*  4 |     TABLE ACCESS FULL| OBJ_PACIENT   |   444 | 13764 |     7   (0)| 00:00:01 |
+|*  5 |     TABLE ACCESS FULL| OBJ_VYSETRENI |   534 | 28836 |    13   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   2 - filter(SYSDATE@!-23741.25<=SYSDATE@!-6574.5)
+   3 - access("V"."PACIENT_REF"="P"."SYS_NC_OID$")
+   4 - filter("P"."DATUM_NAROZENI">=SYSDATE@!-23741.25 AND 
+              "P"."DATUM_NAROZENI"<=SYSDATE@!-6574.5)
+   5 - filter("V"."NAZEV"='Akutni bolest')
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --5. Výpis doktorù s danou specializací a poètem rùzných akcí daného doktora za pøedchozích 5 let
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select d.JMENO, d.PRIJMENI, count(v.vysetreni_id) as "POCET_VYSETRENI", s.NAZEV 
+from obj_doktor d join obj_specializace s on REF(s) = d.SPECIALIZACE_ref
+join obj_vysetreni v on v.DOKTOR_ref = REF(d)
+where (sysdate - v.DATUM < 5*365.25) and s.NAZEV = 'Plasticka chirurgie'
+group by d.PRIJMENI, d.JMENO, s.NAZEV
+order by d.PRIJMENI, d.JMENO
+JMENO                                              PRIJMENI                                           POCET_VYSETRENI NAZEV                                            
+-------------------------------------------------- -------------------------------------------------- --------------- --------------------------------------------------
+Kimberly                                           Aguilar                                                          1 Plasticka chirurgie                                
+Sonia                                              Benjamin                                                         3 Plasticka chirurgie                                
+Amena                                              Berger                                                           1 Plasticka chirurgie                                
+Patricia                                           Bonner                                                           1 Plasticka chirurgie                                
+Reese                                              Brennan                                                          1 Plasticka chirurgie                                
+Vivien                                             Burt                                                             2 Plasticka chirurgie                                
+Bo                                                 Cabrera                                                          2 Plasticka chirurgie                                
+Roary                                              Chen                                                             2 Plasticka chirurgie                                
+Tucker                                             Clemons                                                          2 Plasticka chirurgie                                
+Hanae                                              Coffey                                                           1 Plasticka chirurgie                                
+Deborah                                            Daugherty                                                        1 Plasticka chirurgie                                
+Hilary                                             Duffy                                                            2 Plasticka chirurgie                                
+Azalia                                             Dunlap                                                           1 Plasticka chirurgie                                
+Abraham                                            Emerson                                                          2 Plasticka chirurgie                                
+Magee                                              Estrada                                                          1 Plasticka chirurgie                                
+Marah                                              Fletcher                                                         3 Plasticka chirurgie                                
+MacKensie                                          Floyd                                                            1 Plasticka chirurgie                                
+Jarrod                                             Guy                                                              2 Plasticka chirurgie                                
+Carl                                               Henderson                                                        2 Plasticka chirurgie                                
+Adrian                                             Holden                                                           1 Plasticka chirurgie                                
+Plato                                              Huffman                                                          1 Plasticka chirurgie                                
+Jana                                               Jackson                                                          1 Plasticka chirurgie                                
+Sawyer                                             Jarvis                                                           2 Plasticka chirurgie                                
+Dolan                                              Lamb                                                             1 Plasticka chirurgie                                
+Maia                                               Lane                                                             2 Plasticka chirurgie                                
+Tatiana                                            Leblanc                                                          1 Plasticka chirurgie                                
+Felix                                              Logan                                                            1 Plasticka chirurgie                                
+Sarah                                              Lyons                                                            2 Plasticka chirurgie                                
+Elvis                                              Massey                                                           3 Plasticka chirurgie                                
+Orlando                                            Maxwell                                                          2 Plasticka chirurgie                                
+Alan                                               Mcgowan                                                          1 Plasticka chirurgie                                
+Herman                                             Nixon                                                            2 Plasticka chirurgie                                
+Nayda                                              Noble                                                            2 Plasticka chirurgie                                
+Debra                                              Owen                                                             1 Plasticka chirurgie                                
+Lynn                                               Petty                                                            1 Plasticka chirurgie                                
+Chloe                                              Pollard                                                          1 Plasticka chirurgie                                
+Moana                                              Quinn                                                            3 Plasticka chirurgie                                
+Harriet                                            Reid                                                             2 Plasticka chirurgie                                
+May                                                Richardson                                                       1 Plasticka chirurgie                                
+Perry                                              Rios                                                             1 Plasticka chirurgie                                
+Xavier                                             Robertson                                                        2 Plasticka chirurgie                                
+Tara                                               Russell                                                          2 Plasticka chirurgie                                
+Kiara                                              Sanders                                                          1 Plasticka chirurgie                                
+Teagan                                             Sanders                                                          1 Plasticka chirurgie                                
+Branden                                            Santiago                                                         1 Plasticka chirurgie                                
+Cailin                                             Spencer                                                          2 Plasticka chirurgie                                
+Kathleen                                           Valenzuela                                                       2 Plasticka chirurgie                                
+Russell                                            Vaughan                                                          2 Plasticka chirurgie                                
+Kalia                                              Velasquez                                                        2 Plasticka chirurgie                                
+Castor                                             Wade                                                             1 Plasticka chirurgie                                
+Nasim                                              Whitfield                                                        1 Plasticka chirurgie                                
+Haviva                                             Wolfe                                                            1 Plasticka chirurgie                                
+
+ 52 rows selected 
+
+Plan hash value: 305591308
+ 
+--------------------------------------------------------------------------------------------
+| Id  | Operation               | Name             | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT        |                  |    94 | 18894 |    26  (12)| 00:00:01 |
+|   1 |  SORT ORDER BY          |                  |    94 | 18894 |    26  (12)| 00:00:01 |
+|   2 |   HASH GROUP BY         |                  |    94 | 18894 |    26  (12)| 00:00:01 |
+|*  3 |    HASH JOIN            |                  |    94 | 18894 |    24   (5)| 00:00:01 |
+|   4 |     MERGE JOIN CARTESIAN|                  |   943 | 92414 |    16   (0)| 00:00:01 |
+|*  5 |      TABLE ACCESS FULL  | OBJ_SPECIALIZACE |     1 |    49 |     3   (0)| 00:00:01 |
+|   6 |      BUFFER SORT        |                  |   943 | 46207 |    13   (0)| 00:00:01 |
+|*  7 |       TABLE ACCESS FULL | OBJ_VYSETRENI    |   943 | 46207 |    13   (0)| 00:00:01 |
+|   8 |     TABLE ACCESS FULL   | OBJ_DOKTOR       |  1001 |   100K|     7   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   3 - access("V"."DOKTOR_REF"="D"."SYS_NC_OID$" AND 
+              "D"."SPECIALIZACE_REF"="S"."SYS_NC_OID$")
+   5 - filter("S"."NAZEV"='Plasticka chirurgie')
+   7 - filter(SYSDATE@!-"V"."DATUM"<1826.25)
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --6. Výpis souètu rùzných akcí provedených doktory se stejnými specializacemi za pøedchozích 5 let 
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --A)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select s.NAZEV, count(v.vysetreni_id) as "POCET_VYSETRENI" 
+from obj_vysetreni v 
+join obj_doktor d on REF(d) = v.DOKTOR_ref 
+join obj_specializace s on REF(s) = d.SPECIALIZACE_ref
+where (sysdate - v.DATUM < 5*365.25)
+group by cube(s.NAZEV)
+order by s.NAZEV
+NAZEV                                              POCET_VYSETRENI
+-------------------------------------------------- ---------------
+Chirurgie                                                      109 
+Fyzioterapie                                                    89 
+Gynekologie                                                     84 
+Kardiologie                                                    103 
+Neurologie                                                     103 
+Ocni lekarstvi                                                  90 
+Ortoped                                                        103 
+Plasticka chirurgie                                             81 
+Psychiatrie                                                     83 
+Urologie                                                        98 
+                                                               943 
+
+ 11 rows selected 
+
+Plan hash value: 3631806846
+ 
+--------------------------------------------------------------------------------------------
+| Id  | Operation               | Name             | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT        |                  |   943 |   113K|    26  (12)| 00:00:01 |
+|   1 |  SORT ORDER BY          |                  |   943 |   113K|    26  (12)| 00:00:01 |
+|   2 |   SORT GROUP BY         |                  |   943 |   113K|    26  (12)| 00:00:01 |
+|   3 |    GENERATE CUBE        |                  |   943 |   113K|    26  (12)| 00:00:01 |
+|   4 |     SORT GROUP BY       |                  |   943 |   113K|    26  (12)| 00:00:01 |
+|*  5 |      HASH JOIN          |                  |   943 |   113K|    24   (5)| 00:00:01 |
+|   6 |       TABLE ACCESS FULL | OBJ_SPECIALIZACE |    10 |   370 |     3   (0)| 00:00:01 |
+|*  7 |       HASH JOIN         |                  |   943 | 81098 |    21   (5)| 00:00:01 |
+|   8 |        TABLE ACCESS FULL| OBJ_DOKTOR       |  1001 | 37037 |     7   (0)| 00:00:01 |
+|*  9 |        TABLE ACCESS FULL| OBJ_VYSETRENI    |   943 | 46207 |    13   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   5 - access("D"."SPECIALIZACE_REF"="S"."SYS_NC_OID$")
+   7 - access("V"."DOKTOR_REF"="D"."SYS_NC_OID$")
+   9 - filter(SYSDATE@!-"V"."DATUM"<1826.25)
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> --B)
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
+> select s.NAZEV, count(v.vysetreni_id) as "POCET_VYSETRENI" 
+from obj_vysetreni v 
+join obj_doktor d on REF(d) = v.DOKTOR_ref 
+join obj_specializace s on REF(s) = d.SPECIALIZACE_ref
+where (sysdate - v.DATUM < 5*365.25)
+group by s.NAZEV
+union
+select null, count(v.vysetreni_id) from obj_vysetreni v 
+where (sysdate - v.DATUM < 5*365.25)
+NAZEV                                              POCET_VYSETRENI
+-------------------------------------------------- ---------------
+Chirurgie                                                      109 
+Fyzioterapie                                                    89 
+Gynekologie                                                     84 
+Kardiologie                                                    103 
+Neurologie                                                     103 
+Ocni lekarstvi                                                  90 
+Ortoped                                                        103 
+Plasticka chirurgie                                             81 
+Psychiatrie                                                     83 
+Urologie                                                        98 
+                                                               943 
+
+ 11 rows selected 
+
+Plan hash value: 1939780369
+ 
+-------------------------------------------------------------------------------------------
+| Id  | Operation              | Name             | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |                  |   944 |   135K|    40  (43)| 00:00:01 |
+|   1 |  SORT UNIQUE           |                  |   944 |   135K|    40  (43)| 00:00:01 |
+|   2 |   UNION-ALL            |                  |       |       |            |          |
+|   3 |    HASH GROUP BY       |                  |   943 |   135K|    26  (12)| 00:00:01 |
+|*  4 |     HASH JOIN          |                  |   943 |   135K|    24   (5)| 00:00:01 |
+|   5 |      TABLE ACCESS FULL | OBJ_SPECIALIZACE |    10 |   490 |     3   (0)| 00:00:01 |
+|*  6 |      HASH JOIN         |                  |   943 | 92414 |    21   (5)| 00:00:01 |
+|*  7 |       TABLE ACCESS FULL| OBJ_VYSETRENI    |   943 | 46207 |    13   (0)| 00:00:01 |
+|   8 |       TABLE ACCESS FULL| OBJ_DOKTOR       |  1001 | 49049 |     7   (0)| 00:00:01 |
+|   9 |    SORT AGGREGATE      |                  |     1 |    22 |    14   (8)| 00:00:01 |
+|* 10 |     TABLE ACCESS FULL  | OBJ_VYSETRENI    |   943 | 20746 |    13   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------
+ 
+Predicate Information (identified by operation id):
+---------------------------------------------------
+ 
+   4 - access("D"."SPECIALIZACE_REF"="S"."SYS_NC_OID$")
+   6 - access("V"."DOKTOR_REF"="D"."SYS_NC_OID$")
+   7 - filter(SYSDATE@!-"V"."DATUM"<1826.25)
+  10 - filter(SYSDATE@!-"V"."DATUM"<1826.25)
+ 
+Note
+-----
+   - dynamic sampling used for this statement (level=2)
+
+Unable to gather statistics please unsure user has correct access.
+The statistic feature requires that the user is granted select on v_$sesstat, v_$statname and v_$session.
