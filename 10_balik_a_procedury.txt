@@ -1,0 +1,34 @@
+CREATE OR REPLACE PACKAGE nemocnice_api AS
+PROCEDURE vytvor_doktora (jmeno in VARCHAR2, prijmeni in VARCHAR2, plat in NUMBER, specializace in NUMBER,
+ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2);
+PROCEDURE vytvor_pacienta (jmeno in VARCHAR2, prijmeni in VARCHAR2, datum_narozeni in DATE, vaha in NUMBER, vyska in NUMBER,
+ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2);
+PROCEDURE vytvor_vysetreni (nazev in VARCHAR2, popis in VARCHAR2, datum in DATE, doktor_id in NUMBER, pacient_id in NUMBER);
+END;
+/
+CREATE OR REPLACE PACKAGE BODY nemocnice_api AS
+PROCEDURE vytvor_doktora (jmeno in VARCHAR2, prijmeni in VARCHAR2, plat in NUMBER, specializace in NUMBER,
+ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2) AS
+adresa_id NUMBER;
+BEGIN
+INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto)
+RETURNING adresa_id INTO adresa_id;
+INSERT INTO doktor (jmeno, prijmeni, plat,specializace_id, adresa_id) values (jmeno,prijmeni, plat, specializace, adresa_id);
+END;
+PROCEDURE vytvor_pacienta (jmeno in VARCHAR2, prijmeni in VARCHAR2, datum_narozeni in DATE, vaha in NUMBER, vyska in NUMBER,
+ulice in VARCHAR2,psc in NUMBER, cp in NUMBER, mesto in VARCHAR2) AS
+adresa_id NUMBER;
+BEGIN
+INSERT INTO adresa (ulice,psc,cp,mesto) values(ulice, psc, cp, mesto)
+RETURNING adresa_id INTO adresa_id;
+INSERT INTO pacient (jmeno, prijmeni, datum_narozeni, vaha, vyska, adresa_id) values (jmeno,prijmeni, datum_narozeni,vaha,vyska,adresa_id);
+END;
+PROCEDURE vytvor_vysetreni (nazev in VARCHAR2, popis in VARCHAR2, datum in DATE, doktor_id in NUMBER, pacient_id in NUMBER) AS
+BEGIN
+INSERT INTO vysetreni (nazev, popis, datum, doktor_id, pacient_id) values (nazev, popis, datum, doktor_id, pacient_id);
+END;
+END;
+
+/
+
+
