@@ -22,3 +22,8 @@ END;
 
 -- vypocitaji se prumerne platy, 1. doktor je Chirurg (je videt zmena oproti vypisu (08_output.txt, hned prvni vystup)
 UPDATE doktor SET plat = 300000 WHERE doktor_id = 1;
+
+-- odebere pridany sloupec, proceduru a trigger
+ALTER TABLE specializace drop column prumerny_plat;
+drop trigger trg_specializace_prum_plat;
+drop procedure prcd_specializace_prum_plat;
