@@ -1,4 +1,4 @@
 ﻿Jako tabulka faktů je zvolena tabulka s vyšetřeními.
-Jako tabulky dimenzí jsou zvoleny doktoři a pacienti.
+Jako tabulky dimenzí jsou zvoleny tabulky s doktory a pacienty.
 Možné analýzy jsou např. Provedená vyšetření doktory se specializací kardiochirurg za určité období (měsíc, rok).
 Dále by se mohlo sledovat kolik preventivních vyšetření bylo provedeno za určité časové období, které by se dalo rozšířit o filtrování podle jednotlivých specializací.

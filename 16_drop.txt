@@ -161,3 +161,5 @@ begin
 	EXCEPTION WHEN OTHERS THEN NULL;
 end;  
 /
+drop procedure prcd_pridani_vysetreni;
+drop package nemocnice_api;
