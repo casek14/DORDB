@@ -175,4 +175,3 @@ drop type T_Pacient force;
 drop type T_doktor force;
 drop type T_adresa force;
 drop type T_specializace force;
-drop trigger trg_pridani_pacienta;
