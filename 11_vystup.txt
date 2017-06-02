@@ -1,0 +1,60 @@
+> --1) Pøidání doktora
+> -- Pøed pøidáním 
+> Select * from doktor where prijmeni = 'Prijmeni'
+no rows selected
+
+
+> Select * from adresa where mesto = 'Hradec'
+no rows selected
+
+
+> EXEC nemocnice_api.vytvor_doktora('Test', 'Prijmeni', 250000, 1, 'ulice', 12345, 54, 'Hradec')
+anonymous block completed
+> -- Po pøidání
+> Select * from doktor where prijmeni = 'Prijmeni'
+ DOKTOR_ID JMENO                                              PRIJMENI                                                 PLAT SPECIALIZACE_ID  ADRESA_ID
+---------- -------------------------------------------------- -------------------------------------------------- ---------- --------------- ----------
+      1001 Test                                               Prijmeni                                               250000               1       1001 
+
+> Select * from adresa where mesto = 'Hradec'
+ ADRESA_ID ULICE                                                     PSC         CP MESTO                                            
+---------- -------------------------------------------------- ---------- ---------- --------------------------------------------------
+      1001 ulice                                                   12345         54 Hradec                                             
+
+> --2) Pøidání pacienta
+> -- Pøed pøidáním 
+> Select * from pacient where prijmeni = 'Prijmeni'
+no rows selected
+
+
+> Select * from adresa where mesto = 'Trutnov'
+no rows selected
+
+
+> EXEC nemocnice_api.vytvor_pacienta('Test', 'Prijmeni', '06/06/2015', 30, 50, 'ulice', 14245, 54, 'Trutnov')
+anonymous block completed
+> -- Po pøidání
+> Select * from pacient where prijmeni = 'Prijmeni'
+PACIENT_ID JMENO                                              PRIJMENI                                           DATUM_NAROZENI       VAHA      VYSKA  ADRESA_ID
+---------- -------------------------------------------------- -------------------------------------------------- -------------- ---------- ---------- ----------
+      1001 Test                                               Prijmeni                                           06.06.15               30         50       1002 
+
+> Select * from adresa where mesto = 'Trutnov'
+ ADRESA_ID ULICE                                                     PSC         CP MESTO                                            
+---------- -------------------------------------------------- ---------- ---------- --------------------------------------------------
+      1002 ulice                                                   14245         54 Trutnov                                            
+
+> --3) Pøidání vyšetøení
+> -- Pøed pøidáním 
+> Select * from vysetreni where popis = 'Test balíku'
+no rows selected
+
+
+> EXEC nemocnice_api.vytvor_vysetreni('Test', 'Test balíku', '06/06/2015', 30, 5)
+anonymous block completed
+> -- Po pøidání
+> Select * from vysetreni where popis = 'Test balíku'
+VYSETRENI_ID NAZEV                                              POPIS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                DATUM     DOKTOR_ID PACIENT_ID
+------------ -------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------- ---------- ----------
+        2001 Test                                               Test balíku                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          06.06.15         30          5 
+
